@@ -1,10 +1,12 @@
-from flask import Flask 
+from flask import Flask
+import main
+
 app = Flask(__name__)
 
 @app.route("/")
-def run_checker():
-    # Existing price check logic
-    return "Alerts running!"
-
-if __name__ == "__main__":  
-    app.run()
+def run_app():
+    main.run() # Execute your main stock checker logic
+    return "App run successfully!"
+    
+if __name__ == "__main__":
+   app.run()
