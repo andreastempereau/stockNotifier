@@ -3,15 +3,50 @@ import time
 import pandas_datareader as web
 import pync
 import configparser as cg
+import sqlite3
+import datetime
 
+conn = sqlite3.connect('config.db')
+c = conn.cursor()
+
+c.execute("""CREATE TABLE IF NOT EXISTS historical_prices (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ticker TEXT NOT NULL,
+                price REAL NOT NULL,
+                datetime TEXT NOT NULL
+             )""")
+
+conn.commit()
+conn.close()
 
 def fetch_stock_data(ticker):
     try:
         data = web.DataReader(ticker, "yahoo")
+        current_price = data["Adj Close"][-1]
+        prev_close = data["Close"][-2]
+
+        conn = sqlite3.connect('config.db')
+        c = conn.cursor()
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        c.execute("INSERT INTO historical_prices (ticker, price, datetime) VALUES (?, ?, ?)", (ticker, current_price, timestamp))
+        conn.commit()
+        conn.close()
         return data["Adj Close"][-1], data["Close"][-2]
+    
+
     except Exception as e:
         print(f"Error fetching data for {ticker}: {e}")
         return None, None
+
+def get_historical_prices(ticker, limit=10):
+    conn = sqlite3.connect('config.db')
+    c = conn.cursor()
+
+    c.execute("SELECT price, datetime FROM historical_prices WHERE ticker = ? ORDER BY id DESC LIMIT ?", (ticker, limit))
+    historical_data = c.fetchall()
+
+    conn.close()
+    return historical_data
 
 def calculate_price_change(current_price, prev_close):
     if prev_close:

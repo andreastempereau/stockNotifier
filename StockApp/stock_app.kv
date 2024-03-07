@@ -1,0 +1,31 @@
+<StockInput@BoxLayout>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: '30sp'
+    TextInput:
+        id: ticker_input
+        hint_text: 'Enter stock ticker'
+    Button:
+        text: 'Add'
+        on_press: root.add_ticker(ticker_input.text)
+
+<StockApp>:
+    orientation: 'vertical'
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: '30sp'
+        Label:
+            text: 'Tickers'
+        Label:
+            text: 'Price'
+        Label:
+            text: 'Change'
+    ScrollView:
+        BoxLayout:
+            id: stock_list
+            orientation: 'vertical'
+            size_hint_y: None
+            height: self.minimum_height
+    StockInput:
+        id: stock_input
