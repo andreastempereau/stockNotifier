@@ -7,7 +7,18 @@
         hint_text: 'Enter stock ticker'
     Button:
         text: 'Add'
-        on_press: root.add_ticker(ticker_input.text)
+        on_press: root.parent.parent.add_ticker(ticker_input.text)
+
+<StockBox@BoxLayout>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: '30sp'
+    Label:
+        text: root.ticker
+    Label:
+        text: root.price
+    Label:
+        text: root.change
 
 <StockApp>:
     orientation: 'vertical'
